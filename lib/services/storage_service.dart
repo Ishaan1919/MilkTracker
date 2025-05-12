@@ -1,0 +1,34 @@
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../models/milk_entry.dart';
+
+class StorageService {
+  static const _entriesKey = 'milk_entries';
+  static const _priceKey = 'milk_price';
+
+  Future<void> saveEntry(MilkEntry entry) async {
+    final prefs = await SharedPreferences.getInstance();
+    final data = prefs.getString(_entriesKey);
+    Map<String, dynamic> entries = data != null ? json.decode(data) : {};
+    entries[entry.date.toIso8601String()] = entry.liters;
+    prefs.setString(_entriesKey, json.encode(entries));
+  }
+
+  Future<Map<DateTime, double>> getAllEntries() async {
+    final prefs = await SharedPreferences.getInstance();
+    final data = prefs.getString(_entriesKey);
+    Map<String, dynamic> entries = data != null ? json.decode(data) : {};
+    return entries.map((key, value) =>
+        MapEntry(DateTime.parse(key), value.toDouble()));
+  }
+
+  Future<void> savePrice(double price) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setDouble(_priceKey, price);
+  }
+
+  Future<double> getPrice() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getDouble(_priceKey) ?? 0.0;
+  }
+}
