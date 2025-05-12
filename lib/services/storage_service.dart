@@ -7,22 +7,30 @@ class StorageService {
   static const _priceKey = 'milk_price';
   static const _defaultLitersKey = 'default_liters';
 
+Future<void> saveEntry(MilkEntry entry) async {
+  final prefs = await SharedPreferences.getInstance();
+  final data = prefs.getString(_entriesKey);
+  Map<String, dynamic> entries = data != null ? json.decode(data) : {};
 
-  Future<void> saveEntry(MilkEntry entry) async {
-    final prefs = await SharedPreferences.getInstance();
-    final data = prefs.getString(_entriesKey);
-    Map<String, dynamic> entries = data != null ? json.decode(data) : {};
-    entries[entry.date.toIso8601String()] = entry.liters;
-    prefs.setString(_entriesKey, json.encode(entries));
-  }
+  // Normalize date to remove time (00:00:00)
+  final normalizedDate = DateTime(entry.date.year, entry.date.month, entry.date.day);
+  entries[normalizedDate.toIso8601String()] = entry.liters;
 
-  Future<Map<DateTime, double>> getAllEntries() async {
-    final prefs = await SharedPreferences.getInstance();
-    final data = prefs.getString(_entriesKey);
-    Map<String, dynamic> entries = data != null ? json.decode(data) : {};
-    return entries.map((key, value) =>
-        MapEntry(DateTime.parse(key), value.toDouble()));
-  }
+  prefs.setString(_entriesKey, json.encode(entries));
+}
+
+
+Future<Map<DateTime, double>> getAllEntries() async {
+  final prefs = await SharedPreferences.getInstance();
+  final data = prefs.getString(_entriesKey);
+  Map<String, dynamic> entries = data != null ? json.decode(data) : {};
+  return entries.map((key, value) {
+    final date = DateTime.parse(key);
+    final normalizedDate = DateTime(date.year, date.month, date.day);
+    return MapEntry(normalizedDate, value.toDouble());
+  });
+}
+
 
   Future<void> savePrice(double price) async {
     final prefs = await SharedPreferences.getInstance();
