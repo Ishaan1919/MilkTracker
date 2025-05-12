@@ -5,6 +5,8 @@ import '../models/milk_entry.dart';
 class StorageService {
   static const _entriesKey = 'milk_entries';
   static const _priceKey = 'milk_price';
+  static const _defaultLitersKey = 'default_liters';
+
 
   Future<void> saveEntry(MilkEntry entry) async {
     final prefs = await SharedPreferences.getInstance();
@@ -31,4 +33,15 @@ class StorageService {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getDouble(_priceKey) ?? 0.0;
   }
+
+  Future<void> saveDefaultLiters(double liters) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setDouble(_defaultLitersKey, liters);
+  }
+
+  Future<double> getDefaultLiters() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getDouble(_defaultLitersKey) ?? 0.0;
+}
+
 }
