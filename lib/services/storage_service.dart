@@ -52,4 +52,23 @@ Future<Map<DateTime, double>> getAllEntries() async {
     return prefs.getDouble(_defaultLitersKey) ?? 0.0;
 }
 
+Future<Map<String, double>> getAllMonthlyDefaults() async {
+  final prefs = await SharedPreferences.getInstance();
+  final keys = prefs.getKeys().where((k) => k.startsWith("default_"));
+  Map<String, double> defaults = {};
+  for (String key in keys) {
+    String monthKey = key.replaceFirst("default_", ""); // like "2024-05"
+    defaults[monthKey] = prefs.getDouble(key) ?? 0.0;
+  }
+  return defaults;
+}
+
+Future<void> saveMonthlyDefaultLiters(Map<String, double> map) async {
+  final prefs = await SharedPreferences.getInstance();
+  for (var entry in map.entries) {
+    await prefs.setDouble("default_${entry.key}", entry.value);
+  }
+}
+
+
 }
