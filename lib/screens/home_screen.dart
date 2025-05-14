@@ -112,10 +112,12 @@ double _calculateTotalLitersForMonth(DateTime month) {
 
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Milk Tracker")),
-      body: Padding(
+      appBar: AppBar(title: const Text("Milk Manager")),
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: Column(children: [
+        child: Column(
+          // crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
           Row(
             children: [
               Expanded(
@@ -140,7 +142,9 @@ double _calculateTotalLitersForMonth(DateTime month) {
           Row(
   children: [
           Expanded(
-              child: Text("Default Liters for ${_focusedDay.month}/${_focusedDay.year}: ${_defaultLiters.toStringAsFixed(2)}"),
+              child: Text(
+  "Default Liters for ${_monthName(_focusedDay.month)} ${_focusedDay.year}: ${_defaultLiters.toStringAsFixed(2)}"
+),
             ),
             ElevatedButton(
               onPressed: () => _showUpdateDialog(
@@ -253,6 +257,16 @@ double _calculateTotalLitersForMonth(DateTime month) {
           ),
           Text("Total Liters: ${_calculatedTotalLiters.toStringAsFixed(2)}"),
           Text("Total Cost: ₹${_calculatedTotalCost.toStringAsFixed(2)}"),
+          const SizedBox(height: 20),
+Center(
+  child: Text(
+    "© 2025 Ishaan Gupta. All rights reserved",
+    style: TextStyle(
+      fontSize: 12,
+      color: Colors.grey[700],
+    ),
+  ),
+),
 
         ]),
       ),
@@ -474,6 +488,14 @@ void _calculateTotalsForMonth() {
     _calculatedTotalLiters = totalLiters;
     _calculatedTotalCost = totalCost;
   });
+}
+
+String _monthName(int month) {
+  const months = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+  return months[month - 1];
 }
 
 
