@@ -74,9 +74,19 @@ void _updateEntry(double liters) async {
 double _getLitersForDay(DateTime day) {
   DateTime normalized = DateTime(day.year, day.month, day.day);
   String key = _getMonthKey(day);
-  return _entries[normalized] ?? (_monthlyDefaultLiters[key] ?? 0.0);
 
+  // If entry exists, return it
+  if (_entries.containsKey(normalized)) {
+    return _entries[normalized]!;
+  }
+
+  // Otherwise, assign and return the monthly default
+  double defaultValue = _monthlyDefaultLiters[key] ?? 0.0;
+  _entries[normalized] = defaultValue; // cache for smoother experience
+
+  return defaultValue;
 }
+
 
 
 
